@@ -1,0 +1,15 @@
+{
+  "name": "invoice-generator-node-tutorial",
+  "version": "1.0.0",
+  "description": "Generate professional PDF invoices with the APIVerve Invoice Generator API",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "keywords": ["invoice", "pdf", "generator", "apiverve", "tutorial"],
+  "license": "MIT"
+}
