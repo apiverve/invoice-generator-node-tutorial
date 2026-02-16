@@ -145,8 +145,9 @@ const response = await fetch(API_URL, {
   "status": "ok",
   "error": null,
   "data": {
-    "downloadURL": "https://storage.apiverve.com/invoices/abc123.pdf",
-    "invoiceNumber": "INV-001"
+    "pdfName": "fc17c4bd-e660-4078-94ae-f46be56c9006.pdf",
+    "expires": 1766096689189,
+    "downloadURL": "https://storage.googleapis.com/apiverve-helpers.appspot.com/..."
   }
 }
 ```
