@@ -1,6 +1,7 @@
 # Invoice Generator | APIVerve API Tutorial
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Build](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933)](src/index.js)
 [![Express](https://img.shields.io/badge/Express-4.x-000000)](package.json)
 [![APIVerve | Invoice Generator](https://img.shields.io/badge/APIVerve-Invoice_Generator-purple)](https://apiverve.com/marketplace/invoicegenerator?utm_source=github&utm_medium=tutorial&utm_campaign=invoice-generator-node-tutorial)
