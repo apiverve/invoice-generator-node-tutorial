@@ -1,37 +1,31 @@
-# Invoice Generator | APIVerve API Tutorial
+# Invoice Generator | APIVerve Template
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Build](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
-[![Node.js](https://img.shields.io/badge/Node.js-18+-339933)](src/index.js)
-[![Express](https://img.shields.io/badge/Express-4.x-000000)](package.json)
-[![APIVerve | Invoice Generator](https://img.shields.io/badge/APIVerve-Invoice_Generator-purple)](https://apiverve.com/marketplace/invoicegenerator?utm_source=github&utm_medium=tutorial&utm_campaign=invoice-generator-node-tutorial)
+[![Node.js](https://img.shields.io/badge/Node.js-20+-339933)](package.json)
+[![Express](https://img.shields.io/badge/Express-4-000000)](package.json)
+[![APIVerve | Invoice Generator](https://img.shields.io/badge/APIVerve-Invoice_Generator-purple)](https://apiverve.com/marketplace/invoicegenerator?utm_source=github&utm_medium=template&utm_campaign=invoice-generator-node-tutorial)
 
-A complete invoice generation application built with Node.js and Express. Create professional PDF invoices with a beautiful form interface.
+Turn a form into a PDF invoice. Fill in who it's from and who it's for, add line items, sales tax and a discount, and download a PDF ready to send.
 
-![Screenshot](https://raw.githubusercontent.com/apiverve/invoice-generator-node-tutorial/main/screenshot.jpg)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fapiverve%2Finvoice-generator-node-tutorial&project-name=invoice-generator&repository-name=invoice-generator&env=APIVERVE_API_KEY&envDescription=Your%20APIVerve%20API%20key.%20Free%20to%20create%2C%20no%20card%20needed.&envLink=https%3A%2F%2Fdashboard.apiverve.com%2Fsignup%3Fapi%3Dinvoicegenerator%26utm_source%3Dvercel%26utm_medium%3Dtemplate%26utm_campaign%3Dinvoice-generator-node-tutorial)
 
----
-
-### Get Your Free API Key
-
-This tutorial requires an APIVerve API key. **[Sign up free](https://dashboard.apiverve.com?utm_source=github&utm_medium=tutorial&utm_campaign=invoice-generator-node-tutorial)** - no credit card required.
+![Invoice Generator form with a generated PDF ready to download](https://raw.githubusercontent.com/apiverve/invoice-generator-node-tutorial/main/screenshot.png)
 
 ---
 
-## Features
+### Get your free API key
 
-- Professional PDF invoice generation
-- Beautiful dark mode form interface
-- Dynamic line items (add/remove)
-- Auto-calculated totals
-- Company and client details
-- Custom notes and payment terms
-- Downloadable PDF output
-- Responsive design
+This template needs an APIVerve API key. **[Sign up free](https://dashboard.apiverve.com/signup?api=invoicegenerator&utm_source=github&utm_medium=template&utm_campaign=invoice-generator-node-tutorial)**, no credit card required.
 
-## Quick Start
+---
 
-1. **Clone this repository**
+## Deploy in one click
+
+Click **Deploy with Vercel** above. Vercel copies this repo to your GitHub account, asks for your `APIVERVE_API_KEY`, and gives you a live URL about a minute later.
+
+## Run it locally
+
+1. **Clone the repository**
    ```bash
    git clone https://github.com/apiverve/invoice-generator-node-tutorial.git
    cd invoice-generator-node-tutorial
@@ -43,164 +37,78 @@ This tutorial requires an APIVerve API key. **[Sign up free](https://dashboard.a
    ```
 
 3. **Add your API key**
-
-   Open `src/config.js` and replace the placeholder:
-   ```javascript
-   API_KEY: 'your-api-key-here'
+   ```bash
+   cp .env.example .env
    ```
+   Then open `.env` and set `APIVERVE_API_KEY`.
 
 4. **Start the server**
    ```bash
-   npm start
+   npm run dev
    ```
 
-5. **Open in browser**
+5. **Open** `http://localhost:3000`
 
-   Navigate to `http://localhost:3000`
+## How it works
 
-## Project Structure
+1. The page in `public/index.html` calls `POST /api/generate` on this server.
+2. `server.js` checks the input, then calls Invoice Generator. Your API key stays on the server and never reaches the browser.
+3. The page shows the result.
+
+The server passes on only the fields the Invoice Generator accepts, and caps their lengths and the number of line items, so a deployed copy can't be used to send anything else on your key.
 
 ```
-invoice-generator-node-tutorial/
-├── src/
-│   ├── routes/
-│   │   └── generate.js  # Invoice generation endpoint
-│   ├── config.js        # API key and settings
-│   └── index.js         # Express app setup
-├── public/
-│   └── index.html       # Frontend form and UI
-├── package.json         # Dependencies
-├── screenshot.jpg       # Preview image
-├── LICENSE              # MIT license
-├── .gitignore           # Git ignore rules
-└── README.md            # This file
+├── server.js            # Express: the /api route that calls APIVerve
+├── public/index.html    # The page (HTML, CSS and JavaScript)
+├── .env.example         # Copy to .env and add your key
+└── package.json
 ```
 
-## How It Works
-
-1. **User fills form** - Enter invoice details, company info, line items
-2. **Submit to server** - POST request to `/api/generate`
-3. **API call** - Server sends data to APIVerve Invoice Generator
-4. **PDF generation** - API creates professional PDF invoice
-5. **Download** - User receives download link for the PDF
-
-### The API Call
+### The API call
 
 ```javascript
-const response = await fetch(API_URL, {
+const res = await fetch('https://api.apiverve.com/v1/invoicegenerator', {
   method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'x-api-key': API_KEY
-  },
-  body: JSON.stringify(invoiceData)
+  headers: { 'x-api-key': process.env.APIVERVE_API_KEY, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    invoiceNumber: 'INV-001',
+    from_name: 'Northwind Studio', from_street: '500 Congress Ave', from_city: 'Austin', from_state: 'TX', from_zip: '78701',
+    to_name: 'Contoso Retail', to_street: '1200 17th St', to_city: 'Denver', to_state: 'CO', to_zip: '80202',
+    items: [{ description: 'Homepage design', qty: 1, unit_price: 2400 }],
+    salesTax: 8.25
+  })
 });
+const { data } = await res.json();
+// data.downloadURL → the PDF
 ```
 
-## API Reference
+The download link the API returns expires, so save the PDF if you need to keep it.
 
-**Endpoint:** `POST https://api.apiverve.com/v1/invoicegenerator`
+## Before you share your URL
 
-**Headers:**
+Once deployed, anyone who finds your URL can use it on your API key. Each visitor can make 10 requests a minute, which is fine for a demo. The limit is kept in memory, so it isn't shared between serverless instances. For production:
 
-| Header | Value |
-|--------|-------|
-| `Content-Type` | `application/json` |
-| `x-api-key` | Your API key |
+- Put the page behind your own sign-in, or
+- Move the limit to a shared store such as [Upstash Redis](https://upstash.com/), or
+- Call the route only from your own backend.
 
-**Request Body:**
+## Ideas to extend it
 
-```json
-{
-  "invoiceNumber": "INV-001",
-  "invoiceDate": "2024-01-15",
-  "dueDate": "2024-02-15",
-  "currency": "USD",
-  "from": {
-    "name": "Your Company Inc.",
-    "email": "billing@company.com",
-    "address": "123 Business St, City, Country"
-  },
-  "to": {
-    "name": "Client Company",
-    "email": "client@example.com",
-    "address": "456 Client Ave, City, Country"
-  },
-  "items": [
-    {
-      "description": "Web Development Services",
-      "quantity": 10,
-      "unitPrice": 150,
-      "amount": 1500
-    }
-  ],
-  "notes": "Payment due within 30 days. Thank you for your business!"
-}
-```
+- Create the invoice when an order is paid, and email the PDF
+- Add your logo with the `logoURL` field
+- Keep a record of each invoice number so they never repeat
 
-**Example Response:**
+## API reference
 
-```json
-{
-  "status": "ok",
-  "error": null,
-  "data": {
-    "pdfName": "fc17c4bd-e660-4078-94ae-f46be56c9006.pdf",
-    "expires": 1766096689189,
-    "downloadURL": "https://storage.googleapis.com/apiverve-helpers.appspot.com/..."
-  }
-}
-```
+- [Invoice Generator](https://apiverve.com/marketplace/invoicegenerator?utm_source=github&utm_medium=template&utm_campaign=invoice-generator-node-tutorial): `POST https://api.apiverve.com/v1/invoicegenerator`
+- [Full documentation](https://docs.apiverve.com?utm_source=github&utm_medium=template&utm_campaign=invoice-generator-node-tutorial)
 
-## Use Cases
+## Tech stack
 
-Invoice generation is essential for:
-
-- **Freelancers** - Bill clients for projects
-- **Small Businesses** - Create professional invoices
-- **SaaS Products** - Generate subscription invoices
-- **Contractors** - Invoice for hourly work
-- **E-commerce** - Order receipts and invoices
-- **Service Providers** - Bill for services rendered
-
-## Customization Ideas
-
-- Add company logo upload
-- Support multiple currencies
-- Add tax calculation
-- Email invoice directly to client
-- Create recurring invoice templates
-- Add payment status tracking
-- Generate invoice from saved templates
-
-## Tech Stack
-
-- **Node.js** - JavaScript runtime
-- **Express** - Web framework
-- **Vanilla JS** - Frontend (no framework needed)
-
-## Related APIs
-
-Explore more APIs at [APIVerve](https://apiverve.com/marketplace?utm_source=github&utm_medium=tutorial&utm_campaign=invoice-generator-node-tutorial):
-
-- [QR Code Generator](https://apiverve.com/marketplace/qrcodegenerator?utm_source=github&utm_medium=tutorial&utm_campaign=invoice-generator-node-tutorial) - Add QR codes to invoices
-- [HTML to PDF](https://apiverve.com/marketplace/htmltopdf?utm_source=github&utm_medium=tutorial&utm_campaign=invoice-generator-node-tutorial) - Convert custom HTML to PDF
-- [Email Validator](https://apiverve.com/marketplace/emailvalidator?utm_source=github&utm_medium=tutorial&utm_campaign=invoice-generator-node-tutorial) - Validate client emails
-
-## Free Plan Note
-
-This tutorial works with the free APIVerve plan. Some APIs may have:
-- **Locked fields**: Premium response fields return `null` on free plans
-- **Ignored parameters**: Some optional parameters require a paid plan
-
-The API response includes a `premium` object when limitations apply. [Upgrade anytime](https://dashboard.apiverve.com/plans) to unlock all features.
+- **Node.js 20+** and **Express 4**
+- Plain HTML, CSS and JavaScript, no build step
+- Deploys to Vercel as-is: `server.js` becomes one function and `public/` is served from the CDN
 
 ## License
 
-MIT - see [LICENSE](LICENSE)
-
-## Links
-
-- [Get API Key](https://dashboard.apiverve.com?utm_source=github&utm_medium=tutorial&utm_campaign=invoice-generator-node-tutorial) - Sign up free
-- [APIVerve Marketplace](https://apiverve.com/marketplace?utm_source=github&utm_medium=tutorial&utm_campaign=invoice-generator-node-tutorial) - Browse 300+ APIs
-- [Invoice Generator API](https://apiverve.com/marketplace/invoicegenerator?utm_source=github&utm_medium=tutorial&utm_campaign=invoice-generator-node-tutorial) - API details
+MIT. See [LICENSE](LICENSE).
